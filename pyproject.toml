@@ -1,0 +1,24 @@
+[project]
+name = "fastapi-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "fastapi>=0.128.1",
+    "inflect>=7.5.0",
+    "pydantic-settings>=2.12.0",
+    "sqlalchemy>=2.0.46",
+]
+
+[dependency-groups]
+dev = [
+    "django>=6.0.2",
+    "ruff>=0.15.0",
+]
+
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
