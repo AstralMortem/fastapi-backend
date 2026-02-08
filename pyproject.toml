@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.128.1",
     "inflect>=7.5.0",
     "pydantic-settings>=2.12.0",
+    "pytest>=9.0.2",
     "sqlalchemy>=2.0.46",
 ]
 
