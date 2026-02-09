@@ -1,4 +1,4 @@
-from fastapi_backend.conf.loader import DefaultSettings
+from fastapi_backend.conf import DefaultSettings
 
 
 class ExternalModuleSettings(DefaultSettings):

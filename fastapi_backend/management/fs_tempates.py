@@ -32,3 +32,21 @@ os.environ.setdefault("${settings_env}", "${settings_module_name}")
 
 app = get_application()
 """
+
+SETTINGS_PY_TEMLATE = """# Base Settings
+from ${library_name}.conf import DefaultSettings
+from pathlib import Path
+
+class Settings(DefaultSettings):
+    # Basic
+    DEBUG: bool = True  # Change in production!!!
+
+    #FS
+    BASE_DIR: Path = Path(__file__).parent.parent
+
+    
+# You can use this variable to get settings,
+# or from ${library_name}.conf import settings
+# there are the same reference
+settings = Settings()
+"""

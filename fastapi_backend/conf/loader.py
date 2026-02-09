@@ -1,11 +1,17 @@
 import threading
-from typing import Any, ClassVar
+import sys
+from typing import Any, ClassVar, Self
 from pydantic_settings import BaseSettings
 from .default import DefaultMixin
 import os
 import importlib
+import warnings
 
-
+warnings.filterwarnings(
+    "ignore",
+    message=r'Field name ".*" in ".*" shadows an attribute in parent ".*"',
+    category=UserWarning,
+)
 
 SETTINGS_MODULE_ENV_VAR = "FASTAPI_SETTINGS_MODULE"
 
@@ -34,10 +40,10 @@ def _autodiscover_once() -> None:
 
 
 class DefaultSettings(DefaultMixin, BaseSettings):
-    _singleton: ClassVar[Any] = None
+    _singleton: ClassVar[Self] = None
 
     def __new__(cls, *args, **kwargs):
-        # _autodiscover_once()
+        _autodiscover_once()
 
         inst = DefaultSettings._singleton
         if inst is None:
@@ -67,7 +73,16 @@ class DefaultSettings(DefaultMixin, BaseSettings):
     
 
 
+def _expose_defaultsettings_to_package() -> None:
+    # Avoid circular import issues when autodiscover imports a user module that
+    # itself imports DefaultSettings from fastapi_backend.conf.
+    pkg = sys.modules.get("fastapi_backend.conf")
+    if pkg is not None and not hasattr(pkg, "DefaultSettings"):
+        setattr(pkg, "DefaultSettings", DefaultSettings)
+
+
 # module-level singleton
+_expose_defaultsettings_to_package()
 _autodiscover_once()
 if DefaultSettings._singleton is None:
     settings = DefaultSettings()

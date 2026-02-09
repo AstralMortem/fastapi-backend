@@ -1,3 +1,4 @@
+from pathlib import Path
 from pydantic import Field, AnyUrl, field_validator
 from typing import Literal
 
@@ -63,6 +64,9 @@ class DefaultMixin:
     DEBUG: bool = True
     PROJECT_NAME: str = "FastAPI Project"
     PROJECT_VERSION: str = "0.0.1"
+
+    # FS
+    BASE_DIR: Path = Path(__file__).parent.parent
 
 
     # DATABASE

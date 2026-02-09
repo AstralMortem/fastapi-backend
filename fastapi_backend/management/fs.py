@@ -4,8 +4,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from mako.template import Template
-from .fs_tempates import MANAGE_PY_TEMPLATE, ASGI_PY_TEMPLATE
-
+from .fs_tempates import MANAGE_PY_TEMPLATE, ASGI_PY_TEMPLATE, SETTINGS_PY_TEMLATE
 
 class File:
     def __init__(
@@ -85,9 +84,23 @@ def create_project(name: str, path: Path | None = None):
     root.append(File("manage.py", template=MANAGE_PY_TEMPLATE, params=params))
 
     core_folder = Folder(name)
-    # core_folder.append(File("settings.py"))
+    core_folder.append(File("__init__.py", template=""))
+    core_folder.append(File("settings.py", template=SETTINGS_PY_TEMLATE, params=params))
     core_folder.append(File("asgi.py", template=ASGI_PY_TEMPLATE, params=params))
     root.append(core_folder)
 
     root.render()
 
+    return root
+
+
+def create_module(name: str, path: Path):
+
+    root = Folder(name, path)
+
+    root.append(File("__init__.py", template=""))
+    root.append(File("module.py", template=""))
+    root.append(File("models.py", template=""))
+
+    root.render()
+    return root
