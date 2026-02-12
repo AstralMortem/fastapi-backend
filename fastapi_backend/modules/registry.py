@@ -6,7 +6,7 @@ import asyncio
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from fastapi_backend.db.model import Model
+    from fastapi_backend.db.models import Model
 
 
 class ModulesRegistry:
@@ -91,14 +91,26 @@ class ModulesRegistry:
         if cfg is None:
             raise ValueError(f"Config for {module_label} module not found")
         return cfg
-    
+
     def get_module_models(self, module_label: str):
         return self.get_module_config(module_label).models
-        
+
     def get_model(self, module_label: str, model_name: str):
         model = self.all_models.get(module_label, {}).get(model_name, None)
         if model is None:
             raise ValueError(f"Model {model_name} not found in module {module_label}")
         return model
+
+    def to_tortoise_modules(self):
+        apps = {}
+        for cfg in self.module_configs.values():
+            apps[cfg.label] = {
+                "models": str(cfg.models_py_module.__name__),
+            }
+            if cfg.migrations_module is not None:
+                apps[cfg.label]["migrations"] = str(cfg.migrations_module.__name__)
+
+        return apps
+
 
 modules = ModulesRegistry(None)

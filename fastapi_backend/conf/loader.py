@@ -38,7 +38,6 @@ def _autodiscover_once() -> None:
         _autodiscover_done = True
 
 
-
 class DefaultSettings(DefaultMixin, BaseSettings):
     _singleton: ClassVar[Self] = None
 
@@ -69,8 +68,6 @@ class DefaultSettings(DefaultMixin, BaseSettings):
             # Only override if the subclass explicitly defines a class default
             if name in cls.__dict__:
                 object.__setattr__(self, name, getattr(cls, name))
-
-    
 
 
 def _expose_defaultsettings_to_package() -> None:

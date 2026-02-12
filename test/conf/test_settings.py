@@ -1,4 +1,3 @@
-
 import importlib
 import sys
 import pytest
@@ -14,6 +13,7 @@ def test_default_value_is_used():
     # triggers configure via singleton access
     _ = DefaultSettings()
     assert settings.DEBUG is DEFAULT_DEBUG_VALUE
+
 
 def test_subclass_does_not_eagerly_override_until_instantiated():
     from fastapi_backend.conf import settings, DefaultSettings
@@ -62,7 +62,7 @@ def test_multiple_subclasses_last_registered_wins():
         DEBUG: bool = True
 
     # not applied yet
-    assert settings.DEBUG is False # From A()
+    assert settings.DEBUG is False  # From A()
     assert settingsa.DEBUG is False
 
     settingsb = B()  # instantiate last one to trigger rebuild
@@ -71,7 +71,6 @@ def test_multiple_subclasses_last_registered_wins():
     assert settingsb is settings
     assert settingsa is settings
     assert settingsa is settingsb
-
 
 
 def test_settings_from_env_module():

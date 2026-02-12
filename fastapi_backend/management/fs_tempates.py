@@ -1,5 +1,3 @@
-
-
 MANAGE_PY_TEMPLATE = """#!/usr/bin/env python
 #Django's command-line utility for administrative tasks
 
@@ -44,9 +42,24 @@ class Settings(DefaultSettings):
     #FS
     BASE_DIR: Path = Path(__file__).parent.parent
 
+    #MODULES
+    INSTALLED_MODULES: list[str] = []
+
     
 # You can use this variable to get settings,
 # or from ${library_name}.conf import settings
 # there are the same reference
 settings = Settings()
+"""
+
+MODULE_PY_TEMPLATE = """# ${module_name} module config
+from fastapi_backend.modules import ModuleConfig
+
+class ${module_name_camel}Config(ModuleConfig):
+    name = "${module_name}"
+
+"""
+
+MODELS_PY_TEMPLATE = """from fastapi_backend.db import models
+
 """

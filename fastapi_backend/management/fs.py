@@ -4,7 +4,15 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from mako.template import Template
-from .fs_tempates import MANAGE_PY_TEMPLATE, ASGI_PY_TEMPLATE, SETTINGS_PY_TEMLATE
+from .fs_tempates import (
+    MANAGE_PY_TEMPLATE,
+    ASGI_PY_TEMPLATE,
+    SETTINGS_PY_TEMLATE,
+    MODULE_PY_TEMPLATE,
+    MODELS_PY_TEMPLATE,
+)
+from fastapi_backend.utils.string import snake_to_camel
+
 
 class File:
     def __init__(
@@ -77,7 +85,7 @@ def create_project(name: str, path: Path | None = None):
         "library_name": "fastapi_backend",
         "project_name": name,
         "settings_env": "FASTAPI_SETTINGS_MODULE",
-        "settings_module_name": "settings"
+        "settings_module_name": "settings",
     }
 
     root = Folder(name, path)
@@ -96,11 +104,18 @@ def create_project(name: str, path: Path | None = None):
 
 def create_module(name: str, path: Path):
 
-    root = Folder(name, path)
+    params = {
+        "module_name": name,
+        "module_name_camel": snake_to_camel(name),
+    }
 
+    root = Folder(name, path)
     root.append(File("__init__.py", template=""))
-    root.append(File("module.py", template=""))
-    root.append(File("models.py", template=""))
+    root.append(File("module.py", template=MODULE_PY_TEMPLATE, params=params))
+    root.append(File("models.py", template=MODELS_PY_TEMPLATE))
+    migrations = Folder("migrations")
+    migrations.append(File("__init__.py", template=""))
+    root.append(migrations)
 
     root.render()
     return root

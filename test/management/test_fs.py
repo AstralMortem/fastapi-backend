@@ -73,10 +73,11 @@ def test_render_into_existing_folder_same_name(tmp_path: Path):
     existing.mkdir()
     keep_file = existing / "keep.txt"
     keep_file.write_text("keep", encoding="utf-8")
-    root = Folder("project", parent=tmp_path, children=[File("new.txt", template="new")])
+    root = Folder(
+        "project", parent=tmp_path, children=[File("new.txt", template="new")]
+    )
 
     with pytest.raises(FileExistsError):
         _ = root.render()
-        
 
     assert keep_file.read_text(encoding="utf-8") == "keep"

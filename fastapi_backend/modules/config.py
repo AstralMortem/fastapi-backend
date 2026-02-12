@@ -8,13 +8,17 @@ from fastapi_backend.utils.loaders import (
     import_string,
 )
 from pathlib import Path
+from functools import cached_property
 
 if TYPE_CHECKING:
-    from fastapi_backend.db.model import Model
+    from fastapi_backend.db.models import Model
     from .registry import ModulesRegistry
 
 MODULE_PY_NAME = "modules"
 MODELS_PY_NAME = "models"
+MIGRATIONS_PY_NAME = "migrations"
+COMMANDS_PY_NAME = "commands"
+MANAGEMENT_PY_NAME = "management"
 
 
 def _path_from_py_module(module: ModuleType):
@@ -69,6 +73,19 @@ class ModuleConfig:
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.label)
+
+    @cached_property
+    def migrations_module(self):
+        if module_has_submodule(self.py_module, MIGRATIONS_PY_NAME):
+            return import_module(f"{self.name}.{MIGRATIONS_PY_NAME}")
+        return None
+
+    @cached_property
+    def commands_module(self):
+        cmd_module_name = f"{MANAGEMENT_PY_NAME}.{COMMANDS_PY_NAME}"
+        if module_has_submodule(self.py_module, cmd_module_name):
+            return import_module(f"{self.name}.{cmd_module_name}")
+        return None
 
     @classmethod
     def create(cls, entry: str):

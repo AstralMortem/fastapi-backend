@@ -48,16 +48,22 @@ def _build_db_url(env: dict, mode: Literal["sync", "async"]):
     elif mode == "async":
         if driver := env.get("DB_ASYNC_DRIVER", None):
             schema += f"+{driver}"
-    
+
+    host = env.get("BASE_DIR", None)
+    if host is not None:
+        host = "/" + str(Path(host, "db.sqlite").relative_to(host))
+    else:
+        host = "127.0.0.1"
 
     return AnyUrl.build(
         scheme=schema,
-        host=env.get("DB_HOST", "127.0.0.1"),
+        host=host,
         port=int(env.get("DB_PORT", None) or 0) or None,
         username=env.get("DB_USER", None),
         password=env.get("DB_PASSWORD", None),
         path=env.get("DB_NAME", None),
     )
+
 
 class DefaultMixin:
     # GENERAL
@@ -67,7 +73,6 @@ class DefaultMixin:
 
     # FS
     BASE_DIR: Path = Path(__file__).parent.parent
-
 
     # DATABASE
     DB_PROVIDER: _SUPPORTED_DB_PROVIDER = "sqlite"
@@ -96,7 +101,6 @@ class DefaultMixin:
     @classmethod
     def validate_async_driver(cls, v, info):
         return _validate_driver_field(v, info, "async")
-    
 
-    #MODULES
+    # MODULES
     INSTALLED_MODULES: list[str] = []

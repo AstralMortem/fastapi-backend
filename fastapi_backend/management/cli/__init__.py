@@ -1,10 +1,18 @@
 from cyclopts import App
+from fastapi_backend import setup
+from .discover import autodiscover
 
 
-def _get_cmd(func_name: str):
-    return f"fastapi_backend.management.cli.commands:{func_name}"
+def cli():
+    setup()
 
-cli = App(name="fastapi_backend")
+    cli_app = App()
+    commands = autodiscover()
 
-cli.command(_get_cmd("createproject"))
-cli.command(_get_cmd("addmodule"))
+    core_cmds = commands.pop("fastapi_backend", None)
+    if core_cmds:
+        cli_app.command(core_cmds, name="*")
+    for group, app in commands.items():
+        cli_app.command(group)(app)
+
+    cli_app()
